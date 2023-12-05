@@ -1,15 +1,49 @@
-type CamapignCreated @entity(immutable: true) {
-  id: Bytes!
+type Campaign @entity {
+  id: ID!
   campaign: Bytes! # address
   safeAddress: Bytes! # address
   rewardTokenAddress: Bytes! # address
-  rootReferral: Bytes! # address
+  rootReferral: Referral! # address
   rewardPercentPerMilestone: BigInt! # uint256
+  totalRewards: BigInt! # uint256
+  availableRewards: BigInt! # uint256
+  claimedRewards: BigInt! # uint256
+  milestonesReached: BigInt! # uint256
+  botCheckFails: BigInt! # uint256
   tokenAmount: BigInt! # uint256
   startTimestamp: BigInt! # uint256
   endTimestamp: BigInt! # uint256
   metadata: String! # string
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+  referrals: [Referral!] @derivedFrom(field: "campaign")
+  totalReferrals: BigInt!
+  transactionHash: Bytes! # bytes32
+}
+
+type Referral @entity {
+  id: ID!
+  user: User!
+  reward: Reward!
+  campaign: Campaign!
+  amountClaimed: BigInt!
+  parentReferral: Referral!
+  childrenReferrals: [Referral!]
+  transactionHash: Bytes! # bytes32
+}
+
+type User @entity {
+  id: ID!
+  user: Bytes! # address
+  campaigns: [Campaign!]
+  rewards: [Reward!] @derivedFrom(field: "user")
+  totalClaimmableRewards: BigInt!
+  referrals: [Referral!] @derivedFrom(field: "user")
+  childrenReferrals: [Referral!]
+  parentReferrals: [Referral!]
+}
+
+type Reward @entity {
+  id: ID!
+  tier: BigInt!
+  user: User!
+  amount: BigInt!
 }
