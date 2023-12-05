@@ -1,0 +1,8 @@
+{
+  "fuji": {
+    "HyperclusterFactory": {
+      "address": "0x50e2c7614bEd6E64b2128d70f23281B6Cf712cDC",
+      "startBlock": 28336264
+    }
+  }
+}

@@ -1,0 +1,15 @@
+type CamapignCreated @entity(immutable: true) {
+  id: Bytes!
+  campaign: Bytes! # address
+  safeAddress: Bytes! # address
+  rewardTokenAddress: Bytes! # address
+  rootReferral: Bytes! # address
+  rewardPercentPerMilestone: BigInt! # uint256
+  tokenAmount: BigInt! # uint256
+  startTimestamp: BigInt! # uint256
+  endTimestamp: BigInt! # uint256
+  metadata: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

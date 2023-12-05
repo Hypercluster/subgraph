@@ -1,0 +1,24 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: HyperclusterFactory
+    network: fuji
+    source:
+      address: "0x50e2c7614bEd6E64b2128d70f23281B6Cf712cDC"
+      abi: HyperclusterFactory
+      startBlock: 28336264
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CamapignCreated
+      abis:
+        - name: HyperclusterFactory
+          file: ./abis/HyperclusterFactory.json
+      eventHandlers:
+        - event: CamapignCreated(address,address,address,address,uint256,uint256,uint256,uint256,string)
+          handler: handleCamapignCreated
+      file: ./src/hypercluster-factory.ts
