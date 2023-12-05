@@ -14,7 +14,8 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - CamapignCreated
+        - Campaign
+        - Referral
       abis:
         - name: HyperclusterFactory
           file: ./abis/HyperclusterFactory.json
@@ -22,3 +23,31 @@ dataSources:
         - event: CamapignCreated(address,address,address,address,uint256,uint256,uint256,uint256,string)
           handler: handleCamapignCreated
       file: ./src/hypercluster-factory.ts
+templates:
+  - kind: ethereum
+    name: Hypercluster
+    network: fuji
+    source:
+      abi: Hypercluster
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Campaign
+        - Referral
+        - User
+        - Reward
+      abis:
+        - name: Hypercluster
+          file: ./abis/Hypercluster.json
+      eventHandlers:
+        - event: ReferralAdded(address,address)
+          handler: handleReferralAdded
+        - event: RewardsClaimed(address,uint256,uint64)
+          handler: handleRewardsClaimed
+        - event: MilestoneReached(uint256)
+          handler: handleMilestoneReached
+        - event: BotCheckFailed(address)
+          handler: handleBotCheckFailed
+      file: ./src/hypercluster.ts

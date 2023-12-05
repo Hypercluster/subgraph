@@ -10,7 +10,6 @@ type Campaign @entity {
   claimedRewards: BigInt! # uint256
   milestonesReached: BigInt! # uint256
   botCheckFails: BigInt! # uint256
-  tokenAmount: BigInt! # uint256
   startTimestamp: BigInt! # uint256
   endTimestamp: BigInt! # uint256
   metadata: String! # string
@@ -43,7 +42,13 @@ type User @entity {
 
 type Reward @entity {
   id: ID!
-  tier: BigInt!
   user: User!
+  tierReward: TierReward!
+  claimedAmount: BigInt!
+}
+
+type TierReward @entity {
+  id: ID!
+  tier: BigInt!
   amount: BigInt!
 }
