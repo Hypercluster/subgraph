@@ -1,6 +1,6 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { CamapignCreated as CamapignCreatedEvent } from "../generated/HyperclusterFactory/HyperclusterFactory";
-import { Campaign, Referral, Reward, User } from "../generated/schema";
+import { Campaign, Referral, Reward, User,TierReward, TierReward } from "../generated/schema";
 
 export function handleCamapignCreated(event: CamapignCreatedEvent): void {
   let campaign=Campaign.load(event.params.campaign.toHexString());
@@ -22,31 +22,48 @@ export function handleCamapignCreated(event: CamapignCreatedEvent): void {
     campaign.transactionHash=event.transaction.hash;
   }
 
-  let reward=Reward.load(event.params.campaign.concat(Bytes.fromI32(1)).toHexString()); // campaign + tier
-  if(reward==null)
+  let tierReward=TierReward.load(event.params.campaign.concat(Bytes.fromI32(1)).toHexString()); // campaign + tier
+  if(tierReward==null)
   {
-    reward = new Reward(event.params.campaign.concat(Bytes.fromI32(1)).toHexString());
-    reward.tier=BigInt.fromI32(1);
-    reward.amount=BigInt.fromI32(0);
+    tierReward = new TierReward(event.params.campaign.concat(Bytes.fromI32(1)).toHexString());
+    tierReward.tier=BigInt.fromI32(1);
+    tierReward.amount=BigInt.fromI32(0);
   }
-  reward.save();
+  tierReward.save()
 
-  let user=User.load(event.params.campaign.concat(event.params.rootReferral).toHexString());
+  let user=User.load(event.params.rootReferral.toHexString()); // referreal
   if(user==null)
   {
     user=new User(event.params.campaign.concat(event.params.rootReferral).toHexString());
     user.user=event.params.rootReferral;
-    user.campaigns=[]
-    user.rewards=[]
+    user.campaigns=[campaign.id]
+    user.childrenReferrals=[]
     user.totalClaimmableRewards=BigInt.fromI32(0);
+    user.childrenReferrals=[]
+    user.parentReferrals=[]
   }
+  user.save();
+
+  let reward=Reward.load(event.params.campaign.concat(event.params.rootReferral).concat(Bytes.fromI32(1)).toHexString()); // campaign + referral + tier
+  if(reward==null)
+  {
+    reward = new Reward(event.params.campaign.concat(Bytes.fromI32(1)).toHexString());
+    reward.tierReward=tierReward.id;
+    reward.claimedAmount=BigInt.fromI32(0);
+    reward.user=user.id;
+  }
+  reward.save();
 
   let referral = new Referral(event.params.campaign.concat(event.params.rootReferral).toHexString());
   if(referral==null)
   {
     referral=new Referral(event.params.campaign.concat(event.params.rootReferral).toHexString());
     referral.campaign=campaign.id;
-    referral.user=event.params.rootReferral;
+    referral.user=user.id;
+    referral.amountClaimed=BigInt.fromI32(0);
+    referral.parentReferral=null;
+    referral.childrenReferrals=[];
+    referral.transactionHash=event.transaction.hash;
   }
 
   referral.campaign=campaign.id;
