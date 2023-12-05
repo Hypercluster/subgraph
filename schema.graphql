@@ -48,7 +48,7 @@ type campaign @entity {
   totalReferrals: BigInt!
 
   "the transaction hash in which the campaign was created"
-  transactionHash: Bytes! # bytes32
+  transactionHash: Bytes!
 }
 
 type referral @entity {
@@ -65,13 +65,13 @@ type referral @entity {
   campaign: campaign!
 
   "the campaign address + the parent user address"
-  parentreferral: referral
+  parentReferral: referral
 
   "the two children referrals of the user"
-  childrenreferrals: [referral!] @derivedFrom(field: "parentreferral")
+  childrenReferrals: [referral!] @derivedFrom(field: "parentReferral")
 
   "the transaction hash in which the referral was created"
-  transactionHash: Bytes! # bytes32
+  transactionHash: Bytes!
 }
 
 type user @entity {
@@ -79,7 +79,8 @@ type user @entity {
   id: ID!
 
   "the user address"
-  user: Bytes! # address
+  user: Bytes!
+
   "the campaigns in which the user has participated"
   campaigns: [campaign!]
 
@@ -107,7 +108,7 @@ type reward @entity {
   user: user!
 
   "the campaign address + the tier"
-  tierReward: tier!
+  tier: tier!
 
   "the campaign address"
   claimedAmount: BigInt!
@@ -118,7 +119,7 @@ type tier @entity {
   id: ID!
 
   "the tier number in the referral network"
-  tier: BigInt!
+  tierNumber: BigInt!
 
   "the total reward amount for users in this tier"
   amount: BigInt!

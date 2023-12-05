@@ -4,7 +4,12 @@ import {
   MilestoneReached as MilestoneReachedEvent,
   BotCheckFailed as BotCheckFailedEvent,
 } from "../generated/templates/Hypercluster/Hypercluster";
-import { Campaign, Referral, Reward, User } from "../generated/schema";
+import {
+  campaign as Campaign,
+  referral as Referral,
+  reward as Reward,
+  user as User,
+} from "../generated/schema";
 
 export function handleReferralAdded(event: ReferralAddedEvent): void {}
 export function handleRewardsClaimed(event: RewardsClaimedEvent): void {}
