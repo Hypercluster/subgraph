@@ -33,7 +33,9 @@ export function handleReferralAdded(event: ReferralAddedEvent): void {
 
     let milestone = Milestone.load(
       event.address
-        .concat(Bytes.fromBigInt(campaign.milestonesReached))
+        .concat(
+          Bytes.fromByteArray(Bytes.fromBigInt(campaign.milestonesReached))
+        )
         .toHexString()
     );
     if (milestone != null) {
@@ -59,11 +61,15 @@ export function handleReferralAdded(event: ReferralAddedEvent): void {
     }
 
     let tier = Tier.load(
-      event.address.concat(Bytes.fromBigInt(tierNumber)).toHexString()
+      event.address
+        .concat(Bytes.fromByteArray(Bytes.fromBigInt(tierNumber)))
+        .toHexString()
     );
     if (tier == null) {
       tier = new Tier(
-        event.address.concat(Bytes.fromBigInt(tierNumber)).toHexString()
+        event.address
+          .concat(Bytes.fromByteArray(Bytes.fromBigInt(tierNumber)))
+          .toHexString()
       );
       tier.tierNumber = tierNumber;
       tier.amount = BigInt.fromI32(0);
@@ -142,7 +148,11 @@ export function handleMilestoneReached(event: MilestoneReachedEvent): void {
     let prevMilestone = Milestone.load(
       event.address
         .concat(
-          Bytes.fromBigInt(campaign.milestonesReached.minus(BigInt.fromI32(1)))
+          Bytes.fromByteArray(
+            Bytes.fromBigInt(
+              campaign.milestonesReached.minus(BigInt.fromI32(1))
+            )
+          )
         )
         .toHexString()
     );
@@ -154,7 +164,9 @@ export function handleMilestoneReached(event: MilestoneReachedEvent): void {
 
     let milestone = new Milestone(
       event.address
-        .concat(Bytes.fromBigInt(campaign.milestonesReached))
+        .concat(
+          Bytes.fromByteArray(Bytes.fromBigInt(campaign.milestonesReached))
+        )
         .toHexString()
     );
     milestone.campaign = campaign.id;
@@ -188,7 +200,7 @@ export function handleMilestoneReached(event: MilestoneReachedEvent): void {
           milestone.milestoneRewards
             .times(
               BigInt.fromI32(5).pow(
-                tierEntity.tierNumber.minus(BigInt.fromI32(9)).toI32()
+                tierEntity.tierNumber.minus(BigInt.fromI32(9)).toU32() as u8
               )
             )
             .div(
