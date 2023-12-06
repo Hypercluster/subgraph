@@ -17,8 +17,11 @@ type campaign @entity {
   "the percent of total supply rewarded on reaching a milestone"
   rewardPercentPerMilestone: BigInt!
 
-  "the total supply of the reward token"
-  totalRewards: BigInt!
+  "the total supply of reward token in the campaign"
+  totalSupply: BigInt!
+
+  "the total supply after decrementing the milestone supply"
+  totalMilestoneSupply: BigInt!
 
   "the available supply of the reward token"
   availableRewards: BigInt!
@@ -42,13 +45,33 @@ type campaign @entity {
   metadata: String!
 
   "the referrals in the network"
-  referrals: [referral!] @derivedFrom(field: "campaign")
+  referrals: [referral!]! @derivedFrom(field: "campaign")
+
+  "the milestones attained in the campaign"
+  milestones: [milestone!]! @derivedFrom(field: "campaign")
 
   "the total number of referrals in the network"
   totalReferrals: BigInt!
 
   "the transaction hash in which the campaign was created"
   transactionHash: Bytes!
+}
+
+type milestone @entity {
+  "the campaign address + the milestone number"
+  id: ID!
+
+  "the milestone number"
+  milestoneNumber: BigInt!
+
+  "the total amount of rewards claimed in this milestone"
+  milestoneRewards: BigInt!
+
+  "the campaign address"
+  campaign: campaign!
+
+  "the number of users in this milestone"
+  claimEligibleUsers: [user!]!
 }
 
 type referral @entity {
@@ -68,7 +91,7 @@ type referral @entity {
   parentReferral: referral
 
   "the two children referrals of the user"
-  childrenReferrals: [referral!] @derivedFrom(field: "parentReferral")
+  childrenReferrals: [referral!]! @derivedFrom(field: "parentReferral")
 
   "the transaction hash in which the referral was created"
   transactionHash: Bytes!
@@ -82,26 +105,26 @@ type user @entity {
   user: Bytes!
 
   "the campaigns in which the user has participated"
-  campaigns: [campaign!]
+  campaigns: [campaign!]!
 
   "the rewards for the user"
-  rewards: [reward!] @derivedFrom(field: "user")
+  rewards: [reward!]! @derivedFrom(field: "user")
 
   "the total amount of claimmable rewards for the user"
   totalClaimmableRewards: BigInt!
 
   "the referrals of the user"
-  referrals: [referral!] @derivedFrom(field: "user")
+  referrals: [referral!]! @derivedFrom(field: "user")
 
   "the children referrals of the user"
-  childrenReferrals: [referral!]
+  childrenReferrals: [referral!]!
 
   "the parent referrals of the user"
-  parentReferrals: [referral!]
+  parentReferrals: [referral!]!
 }
 
 type reward @entity {
-  "the campaign address + the tier + the user address"
+  "the campaign address + the user address"
   id: ID!
 
   "the address of the user"

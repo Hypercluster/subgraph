@@ -20,7 +20,8 @@ export function handleCamapignCreated(event: CamapignCreatedEvent): void {
     campaign.safeAddress = event.params.safeAddress;
     campaign.rewardTokenAddress = event.params.rewardTokenAddress;
     campaign.rewardPercentPerMilestone = event.params.rewardPercentPerMilestone;
-    campaign.totalRewards = event.params.tokenAmount;
+    campaign.totalSupply = event.params.tokenAmount;
+    campaign.totalMilestoneSupply = event.params.tokenAmount;
     campaign.availableRewards = event.params.tokenAmount;
     campaign.claimedRewards = BigInt.fromI32(0);
     campaign.milestonesReached = BigInt.fromI32(0);
@@ -60,10 +61,7 @@ export function handleCamapignCreated(event: CamapignCreatedEvent): void {
   user.save();
 
   let reward = Reward.load(
-    event.params.campaign
-      .concat(event.params.rootReferral)
-      .concat(Bytes.fromI32(1))
-      .toHexString()
+    event.params.campaign.concat(event.params.rootReferral).toHexString()
   ); // campaign + referral + tier
   if (reward == null) {
     reward = new Reward(
