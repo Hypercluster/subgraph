@@ -6,6 +6,7 @@ import {
   reward as Reward,
   user as User,
   tier as Tier,
+  milestone as Milestone,
 } from "../generated/schema";
 
 import { Hypercluster } from "../generated/templates";
@@ -57,8 +58,17 @@ export function handleCamapignCreated(event: CamapignCreatedEvent): void {
     user.parentReferrals = [];
     user.campaigns = [];
   }
-  user.campaigns?.push(campaign.id);
+  user.campaigns.push(campaign.id);
   user.save();
+
+  let milestone = new Milestone(
+    event.params.campaign.concat(Bytes.fromI32(0)).toHexString()
+  );
+  milestone.claimEligibleUsers = [user.id];
+  milestone.milestoneNumber = BigInt.fromI32(0);
+  milestone.milestoneRewards = BigInt.fromI32(0);
+  milestone.campaign = campaign.id;
+  milestone.save();
 
   let reward = Reward.load(
     event.params.campaign.concat(event.params.rootReferral).toHexString()

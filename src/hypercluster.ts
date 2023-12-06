@@ -139,20 +139,16 @@ export function handleMilestoneReached(event: MilestoneReachedEvent): void {
     campaign.save();
 
     let prevUsers: string[] = [];
-    if (campaign.milestonesReached > BigInt.fromI32(1)) {
-      let prevMilestone = Milestone.load(
-        event.address
-          .concat(
-            Bytes.fromBigInt(
-              campaign.milestonesReached.minus(BigInt.fromI32(1))
-            )
-          )
-          .toHexString()
-      );
-      if (prevMilestone != null) {
-        if (prevMilestone.claimEligibleUsers != null) {
-          prevUsers = prevMilestone.claimEligibleUsers;
-        }
+    let prevMilestone = Milestone.load(
+      event.address
+        .concat(
+          Bytes.fromBigInt(campaign.milestonesReached.minus(BigInt.fromI32(1)))
+        )
+        .toHexString()
+    );
+    if (prevMilestone != null) {
+      if (prevMilestone.claimEligibleUsers != null) {
+        prevUsers = prevMilestone.claimEligibleUsers;
       }
     }
 
